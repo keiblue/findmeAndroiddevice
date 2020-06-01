@@ -48,9 +48,9 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         contadorProceso = (TextView) findViewById(R.id.cantidadLlamadas);
         contador =0;
         Handler handler = new Handler();
-        if (ContextCompat.checkSelfPermission(this,
+        if ((ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
+                != PackageManager.PERMISSION_GRANTED )) {
 
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
@@ -63,12 +63,16 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             }
         } else {
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
             latitudeValueGPS.setText(String.valueOf(location.getLatitude()));
             longitudeValueGPS.setText(String.valueOf(location.getLongitude()));
             contadorProceso.setText("0");
             ejecutarTarea(handler);
         }
+
+
+
+
         Log.d("DATA LATITUD", latitudeValueGPS.getText().toString());
         Log.d("DATA LONGITUD", longitudeValueGPS.getText().toString());
 
@@ -98,15 +102,18 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
             //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
+             //                                         int[] grantResults);
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
             return;
+        }else {
+            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            latitudeValueGPS.setText(String.valueOf(location.getLatitude()));
+            longitudeValueGPS.setText(String.valueOf(location.getLongitude()));
         }
 
-        location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        latitudeValueGPS.setText(String.valueOf(location.getLatitude()));
-        longitudeValueGPS.setText(String.valueOf(location.getLongitude()));
+
 
 
     }
