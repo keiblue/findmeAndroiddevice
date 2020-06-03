@@ -262,7 +262,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     }
 
     private void stopDetectingBeacons() {
-
         try {
             mBeaconManager.stopMonitoringBeaconsInRegion(mRegion);
             showToastMessage("Deteniendo");
@@ -274,14 +273,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
         // Desenlazar servicio de beacons
         mBeaconManager.unbind(this);
-
-        // Activar botón de comenzar
-        /*getStartButton().setEnabled(true);
-        getStartButton().setAlpha(1);
-
-        // Desactivar botón de parar
-        getStopButton().setEnabled(false);
-        getStopButton().setAlpha(.5f);*/
     }
 
     /**
@@ -290,8 +281,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     private void askForLocationPermissions() {
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("location_access_needed");
-        builder.setMessage("grant_location_access");
+        builder.setTitle("Necesita acceso de locación");
+        builder.setMessage("Permitir acceso");
         builder.setPositiveButton(android.R.string.ok, null);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
@@ -306,8 +297,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case PERMISSION_REQUEST_COARSE_LOCATION: {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -375,14 +365,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         });
         dialog.show();
     }
-
-    /*private Button getStartButton() {
-        return (Button) findViewById(id.startReadingBeaconsButton);
-    }
-
-    private Button getStopButton() {
-        return (Button) findViewById(id.stopReadingBeaconsButton);
-    }*/
 
     /**
      * Mostrar mensaje
