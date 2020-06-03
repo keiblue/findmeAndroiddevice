@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         longitudeValueGPS = (TextView) findViewById(R.id.longitudeValueGPS);
         latitudeValueGPS = (TextView) findViewById(R.id.latitudeValueGPS);
         contadorProceso = (TextView) findViewById(R.id.cantidadLlamadas);
-        contador =0;
+        contador =1;
         Handler handler = new Handler();
         if ((ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
@@ -59,14 +59,14 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-
+                actualizarpos();
+                //TODO: generar primer registro en DB , tabla ubicacion con IdTelefono
+                contadorProceso.setText("1");
+                ejecutarTarea(handler);
             }
         } else {
-            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            latitudeValueGPS.setText(String.valueOf(location.getLatitude()));
-            longitudeValueGPS.setText(String.valueOf(location.getLongitude()));
-            contadorProceso.setText("0");
+            actualizarpos();
+            contadorProceso.setText("1");
             ejecutarTarea(handler);
         }
 
@@ -109,13 +109,13 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         }else {
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            if(location == null){
+                location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            }
             latitudeValueGPS.setText(String.valueOf(location.getLatitude()));
             longitudeValueGPS.setText(String.valueOf(location.getLongitude()));
         }
-
-
-
-
+        //TODO: actualizar registro en DB , tabla ubicacion con IdTelefono
     }
 
     public void actualizaContador(){
