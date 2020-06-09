@@ -36,23 +36,21 @@ import org.altbeacon.beacon.Identifier;
 import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 
+
 import java.util.ArrayList;
 import java.util.Collection;
 
 public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback, BeaconConsumer, RangeNotifier {
 
     private final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
-    private final int TIEMPO = 1000;
+    private final int TIEMPO = 5000;
 
     LocationManager locationManager;
-    double longitudeBest, latitudeBest;
-    double longitudeGPS, latitudeGPS;
-    double longitudeNetwork, latitudeNetwork;
-    TextView longitudeValueBest, latitudeValueBest;
     TextView longitudeValueGPS, latitudeValueGPS;
-    TextView contadorProceso, latitudeValueNetwork;
+    TextView contadorProceso;
     Location location;
     int contador;
+    Connections conn = new Connections();
 
     protected final String TAG = MainActivity.this.getClass().getSimpleName();;
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
@@ -102,6 +100,11 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
         Log.d("DATA LATITUD", latitudeValueGPS.getText().toString());
         Log.d("DATA LONGITUD", longitudeValueGPS.getText().toString());
+        Log.d("wea",conn.serviceGetUserData("users/1").toString());
+        DataExport data = new DataExport();
+        data.setLatitude(latitudeValueGPS.getText().toString());
+        data.setLongitude(longitudeValueGPS.getText().toString());
+        conn.createUserLocation("location",data);
 
         mBeaconManager = BeaconManager.getInstanceForApplication(this);
 
@@ -115,6 +118,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         idTxt = (EditText) findViewById(R.id.editTextBeacon);
 
         prepareDetection();
+
+
     }
 
 
@@ -172,35 +177,29 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                 if (!isLocationEnabled()) {
                     askToTurnOnLocation();
                 } else { // Localización activada, comprobemos el bluetooth
-                    BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-                    if (mBluetoothAdapter == null) {
-                        showToastMessage("Nulo");
-                    } else if (mBluetoothAdapter.isEnabled()) {
-                        mBluetoothAdapter.getName();
-                        startDetectingBeacons();
-                    } else {
-                        // Pedir al usuario que active el bluetooth
-                        Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                        startActivityForResult(enableBtIntent, REQUEST_ENABLE_BLUETOOTH);
-                    }
+                    comprobarBluetooth();
                 }
             }
         } else { // Versiones de Android < 6
             if (!isLocationEnabled()) {
                 askToTurnOnLocation();
             } else { // Localización activada, comprobemos el bluetooth
-                BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-                if (mBluetoothAdapter == null) {
-                    showToastMessage("Nulo");
-                } else if (mBluetoothAdapter.isEnabled()) {
-                    mBluetoothAdapter.getName();
-                    startDetectingBeacons();
-                } else {
-                    // Pedir al usuario que active el bluetooth
-                    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BLUETOOTH);
-                }
+                comprobarBluetooth();
             }
+        }
+    }
+
+    protected void  comprobarBluetooth (){
+        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBluetoothAdapter == null) {
+            showToastMessage("Nulo");
+        } else if (mBluetoothAdapter.isEnabled()) {
+            mBluetoothAdapter.getName();
+            startDetectingBeacons();
+        } else {
+            // Pedir al usuario que active el bluetooth
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BLUETOOTH);
         }
     }
 
