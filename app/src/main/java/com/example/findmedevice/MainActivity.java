@@ -101,6 +101,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         Log.d("DATA LATITUD", latitudeValueGPS.getText().toString());
         Log.d("DATA LONGITUD", longitudeValueGPS.getText().toString());
         Log.d("wea",conn.serviceGetUserData("users/1").toString());
+        User usuario =new User();
+        usuario = conn.serviceGetUserData("users/1");
         DataExport data = new DataExport();
         data.setLatitude(latitudeValueGPS.getText().toString());
         data.setLongitude(longitudeValueGPS.getText().toString());

@@ -74,6 +74,7 @@ public class Connections {
                     jsonParam.put("latitude", data.getLatitude().toString());
                     jsonParam.put("longitude", data.getLongitude().toString());
 
+
                     Log.i("JSON", jsonParam.toString());
                     DataOutputStream os = new DataOutputStream(conn.getOutputStream());
                     //os.writeBytes(URLEncoder.encode(jsonParam.toString(), "UTF-8"));
@@ -86,8 +87,6 @@ public class Connections {
                     Log.i("MSG", conn.getResponseMessage());
 
                     conn.disconnect();
-
-
                 } catch (JSONException | IOException e) {
                     e.printStackTrace();
                 }
