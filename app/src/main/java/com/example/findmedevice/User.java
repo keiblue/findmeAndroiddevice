@@ -5,6 +5,10 @@ public class User {
     private String name;
     private String LastName;
 
+    public User(){
+
+    };
+
     public long getId() {
         return id;
     }
