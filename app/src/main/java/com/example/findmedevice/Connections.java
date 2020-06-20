@@ -38,7 +38,7 @@ public class Connections {
             JSONObject object = new JSONObject(json);
             for (int i = 0; i < object.length(); i++) {
                 JSONObject jsonObject = object.getJSONObject("Person");
-                out.setId((long) jsonObject.optInt("id"));
+                out.setId(jsonObject.optString("id"));
                 out.setName(jsonObject.optString("firstName"));
                 out.setLastName(jsonObject.optString("lastName"));
             }

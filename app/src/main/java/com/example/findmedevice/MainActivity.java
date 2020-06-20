@@ -36,6 +36,8 @@ import org.altbeacon.beacon.Identifier;
 import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 
+import android.provider.Settings.Secure;
+
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,14 +46,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
     private final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private final int TIEMPO = 5000;
-
-    LocationManager locationManager;
-    TextView longitudeValueGPS, latitudeValueGPS;
-    TextView contadorProceso;
-    Location location;
-    int contador;
-    Connections conn = new Connections();
-
     protected final String TAG = MainActivity.this.getClass().getSimpleName();;
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
     private static final int REQUEST_ENABLE_BLUETOOTH = 1;
@@ -65,8 +59,20 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     // Representa el criterio de campos con los que buscar beacons
     private Region mRegion;
 
+
+    LocationManager locationManager;
+    TextView longitudeValueGPS, latitudeValueGPS;
+    TextView contadorProceso;
+    Location location;
+    int contador;
+    Connections conn = new Connections();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
+        final String androidId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        Log.i("IDANDROID",androidId);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -76,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         contadorProceso = (TextView) findViewById(R.id.cantidadLlamadas);
         contador =1;
         Handler handler = new Handler();
+
         if ((ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED )) {
@@ -100,13 +107,13 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
         Log.d("DATA LATITUD", latitudeValueGPS.getText().toString());
         Log.d("DATA LONGITUD", longitudeValueGPS.getText().toString());
-        Log.d("wea",conn.serviceGetUserData("users/1").toString());
         User usuario =new User();
         usuario = conn.serviceGetUserData("users/1");
+        Log .d("USERID", usuario.getId());
         DataExport data = new DataExport();
         data.setLatitude(latitudeValueGPS.getText().toString());
         data.setLongitude(longitudeValueGPS.getText().toString());
-        conn.createUserLocation("location",data);
+       // conn.createUserLocation("location",data);
 
         mBeaconManager = BeaconManager.getInstanceForApplication(this);
 
@@ -120,8 +127,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         idTxt = (EditText) findViewById(R.id.editTextBeacon);
 
         prepareDetection();
-
-
     }
 
 
@@ -161,6 +166,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             longitudeValueGPS.setText(String.valueOf(location.getLongitude()));
         }
         //TODO: actualizar registro en DB , tabla ubicacion con IdTelefono
+
     }
 
     public void actualizaContador(){
