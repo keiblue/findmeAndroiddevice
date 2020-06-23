@@ -1,6 +1,7 @@
 package com.example.findmedevice;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
@@ -8,7 +9,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,7 +18,6 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,6 +27,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.blikoon.qrcodescanner.QrCodeActivity;
+
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
 import org.altbeacon.beacon.BeaconManager;
@@ -36,7 +37,6 @@ import org.altbeacon.beacon.Identifier;
 import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 
-import android.provider.Settings.Secure;
 
 
 import java.util.ArrayList;
@@ -44,8 +44,17 @@ import java.util.Collection;
 
 public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback, BeaconConsumer, RangeNotifier {
 
+    private static final int REQUEST_CODE_QR_SCAN = 101;
     private final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private final int TIEMPO = 5000;
+
+    LocationManager locationManager;
+    TextView longitudeValueGPS, latitudeValueGPS, QR;
+    TextView contadorProceso;
+    Location location;
+    int contador;
+    Connections conn = new Connections();
+
     protected final String TAG = MainActivity.this.getClass().getSimpleName();;
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
     private static final int REQUEST_ENABLE_BLUETOOTH = 1;
@@ -59,14 +68,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     // Representa el criterio de campos con los que buscar beacons
     private Region mRegion;
 
-
-    LocationManager locationManager;
-    TextView longitudeValueGPS, latitudeValueGPS;
-    TextView contadorProceso;
-    Location location;
-    int contador;
-    Connections conn = new Connections();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -76,6 +77,11 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, 2);
+        }
+
+        QR = findViewById(R.id.textViewQr);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         longitudeValueGPS = (TextView) findViewById(R.id.longitudeValueGPS);
         latitudeValueGPS = (TextView) findViewById(R.id.latitudeValueGPS);
@@ -211,6 +217,11 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         }
     }
 
+    public void onClick(View v) {
+        Intent i = new Intent(MainActivity.this, QrCodeActivity.class);
+        startActivityForResult(i, REQUEST_CODE_QR_SCAN);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_ENABLE_BLUETOOTH) {
@@ -222,6 +233,22 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode != Activity.RESULT_OK) {
+            Toast.makeText(getApplicationContext(), "No se pudo obtener una respuesta", Toast.LENGTH_SHORT).show();
+            String resultado = data.getStringExtra("com.blikoon.qrcodescanner.error_decoding_image");
+            if (resultado != null) {
+                Toast.makeText(getApplicationContext(), "No se pudo escanear el código QR", Toast.LENGTH_SHORT).show();
+            }
+            return;
+        }
+        if (requestCode == REQUEST_CODE_QR_SCAN) {
+            if (data != null) {
+                String lectura = data.getStringExtra("com.blikoon.qrcodescanner.got_qr_scan_relult");
+                QR.setText(lectura);
+            }
+        }
+
     }
     /**
      * Empezar a detectar los beacons, ocultando o mostrando los botones correspondientes
@@ -263,8 +290,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
         for (Beacon beacon : beacons) {
             idTxt.setText(String.valueOf(beacon.getId1()));
-            showToastMessage("encontrado");
-            stopDetectingBeacons();
         }
     }
 
@@ -390,4 +415,5 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         mBeaconManager.removeAllRangeNotifiers();
         mBeaconManager.unbind(this);
     }
+
 }
