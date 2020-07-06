@@ -114,8 +114,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         Log.d("DATA LATITUD", latitudeValueGPS.getText().toString());
         Log.d("DATA LONGITUD", longitudeValueGPS.getText().toString());
         User usuario =new User();
-        usuario = conn.serviceGetUserData("users/1");
-        Log .d("USERID", usuario.getId());
+        usuario = conn.serviceGetUserData("users/2");
+        /*Log .d("USERID", usuario.getId());*/
         DataExport data = new DataExport();
         data.setLatitude(latitudeValueGPS.getText().toString());
         data.setLongitude(longitudeValueGPS.getText().toString());
@@ -234,20 +234,25 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         }
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode != Activity.RESULT_OK) {
-            Toast.makeText(getApplicationContext(), "No se pudo obtener una respuesta", Toast.LENGTH_SHORT).show();
-            String resultado = data.getStringExtra("com.blikoon.qrcodescanner.error_decoding_image");
-            if (resultado != null) {
-                Toast.makeText(getApplicationContext(), "No se pudo escanear el código QR", Toast.LENGTH_SHORT).show();
+        try{
+            if (resultCode != Activity.RESULT_OK) {
+                Toast.makeText(getApplicationContext(), "No se pudo obtener una respuesta", Toast.LENGTH_SHORT).show();
+                String resultado = data.getStringExtra("com.blikoon.qrcodescanner.error_decoding_image");
+                if (resultado != null) {
+                    Toast.makeText(getApplicationContext(), "No se pudo escanear el código QR", Toast.LENGTH_SHORT).show();
+                }
+                return;
             }
-            return;
-        }
-        if (requestCode == REQUEST_CODE_QR_SCAN) {
-            if (data != null) {
-                String lectura = data.getStringExtra("com.blikoon.qrcodescanner.got_qr_scan_relult");
-                QR.setText(lectura);
+            if (requestCode == REQUEST_CODE_QR_SCAN) {
+                if (data != null) {
+                    String lectura = data.getStringExtra("com.blikoon.qrcodescanner.got_qr_scan_relult");
+                    QR.setText(lectura);
+                }
             }
+        }catch (Exception ex){
+             ex.getMessage();
         }
+
 
     }
     /**
