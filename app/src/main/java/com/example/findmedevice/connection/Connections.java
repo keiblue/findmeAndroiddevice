@@ -1,7 +1,13 @@
-package com.example.findmedevice;
+package com.example.findmedevice.connection;
 
+import android.content.Context;
 import android.os.StrictMode;
 import android.util.Log;
+
+import com.example.findmedevice.models.DataExport;
+import com.example.findmedevice.models.Person;
+import com.example.findmedevice.models.Smartphone;
+import com.example.findmedevice.utils.ConstantSQLite;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,8 +23,8 @@ public class Connections {
 
     private String urlBase = "https://find-me-back-end.herokuapp.com/api/";
 
-    public User serviceGetUserData(String url) {
-        User out = new User();
+    public Person serviceGetUserData(String url) {
+        Person out = new Person();
         String route = urlBase.concat(url);
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -56,7 +62,7 @@ public class Connections {
             public void run() {
                 try {
 
-                    User out = new User();
+                    Person out = new Person();
                     String route = urlBase.concat(url);
                     StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
                     StrictMode.setThreadPolicy(policy);
@@ -93,5 +99,72 @@ public class Connections {
             }
         });
     thread.start();
+    }
+
+    public void createSmartphone(final String url, final DataExport data, final Context context) {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+
+                    String mensaje ="";
+                    String route = urlBase.concat(url);
+                    StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+                    StrictMode.setThreadPolicy(policy);
+                    HttpURLConnection conn;
+                    URL urlt = new URL(route);
+                    conn = (HttpURLConnection) urlt.openConnection();
+                    conn.setRequestMethod("POST");
+                    conn.setRequestProperty("Content-Type", "application/json");
+                    conn.setRequestProperty("Accept", "application/json");
+                    conn.setDoOutput(true);
+                    conn.setDoInput(true);
+                    conn.connect();
+
+                    JSONObject jsonParam = new JSONObject();
+                    jsonParam.put("androidId", "Telefono1");
+                    jsonParam.put("BeaconId", data.getBeaconUID());
+
+
+                    Log.i("JSON", jsonParam.toString());
+                    DataOutputStream os = new DataOutputStream(conn.getOutputStream());
+                    //os.writeBytes(URLEncoder.encode(jsonParam.toString(), "UTF-8"));
+                    os.writeBytes(jsonParam.toString());
+
+                    os.flush();
+                    os.close();
+
+                    BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                    StringBuilder response = new StringBuilder();
+                    String responseLine = null;
+                    while ((responseLine = br.readLine()) != null) {
+                        response.append(responseLine.trim());
+                    }
+                    Smartphone smartphone = new Smartphone();
+                    String json = response.toString();
+                    JSONObject object = new JSONObject(json);
+
+                    for (int i = 0; i < object.length(); i++) {
+                        try {
+                            JSONObject jsonObject = object.getJSONObject("data");
+                            smartphone.setId(jsonObject.optString("id"));
+                            ConstantSQLite.RegisterSmartphoneSQL(smartphone, context);
+                            mensaje= object.optString("menssage");
+                        }catch (Exception e){
+                            mensaje= object.optString("menssage");
+
+                        }
+                    }
+
+                    Log.i("STATUS", String.valueOf(conn.getResponseCode()));
+                    Log.i("MSG", conn.getResponseMessage());
+
+                    conn.disconnect();
+                } catch (JSONException | IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        thread.start();
     }
 }

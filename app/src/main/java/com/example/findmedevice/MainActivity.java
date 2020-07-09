@@ -18,6 +18,7 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,8 +27,13 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.blikoon.qrcodescanner.QrCodeActivity;
+import com.example.findmedevice.connection.Connections;
+import com.example.findmedevice.models.DataExport;
+import com.example.findmedevice.models.Person;
+import com.example.findmedevice.utils.ConstantSQLite;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
@@ -42,7 +48,7 @@ import org.altbeacon.beacon.Region;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback, BeaconConsumer, RangeNotifier {
+public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback/*, BeaconConsumer, RangeNotifier*/ {
 
     private static final int REQUEST_CODE_QR_SCAN = 101;
     private final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
@@ -54,8 +60,9 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     Location location;
     int contador;
     Connections conn = new Connections();
+    DataExport data = new DataExport();
 
-    protected final String TAG = MainActivity.this.getClass().getSimpleName();;
+    protected final String TAG = MainActivity.this.getClass().getSimpleName();
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
     private static final int REQUEST_ENABLE_BLUETOOTH = 1;
     private static final long DEFAULT_SCAN_PERIOD_MS = 5000;
@@ -67,6 +74,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
     // Representa el criterio de campos con los que buscar beacons
     private Region mRegion;
+
+    private Button btnEntrar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,60 +90,41 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, 2);
         }
 
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+        }
+
+        btnEntrar = findViewById(R.id.buttonEntrar);
         QR = findViewById(R.id.textViewQr);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        longitudeValueGPS = (TextView) findViewById(R.id.longitudeValueGPS);
-        latitudeValueGPS = (TextView) findViewById(R.id.latitudeValueGPS);
-        contadorProceso = (TextView) findViewById(R.id.cantidadLlamadas);
+        longitudeValueGPS = findViewById(R.id.longitudeValueGPS);
+        latitudeValueGPS = findViewById(R.id.latitudeValueGPS);
+        contadorProceso = findViewById(R.id.cantidadLlamadas);
         contador =1;
         Handler handler = new Handler();
-
-        if ((ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED )) {
-
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
-            } else {
-                // No explanation needed; request the permission
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-                actualizarpos();
-                //TODO: generar primer registro en DB , tabla ubicacion con IdTelefono
-                contadorProceso.setText("1");
-                ejecutarTarea(handler);
-            }
-        } else {
-            actualizarpos();
-            contadorProceso.setText("1");
-            ejecutarTarea(handler);
-        }
+        actualizarpos();
+        contadorProceso.setText("1");
+        ejecutarTarea(handler);
 
         Log.d("DATA LATITUD", latitudeValueGPS.getText().toString());
         Log.d("DATA LONGITUD", longitudeValueGPS.getText().toString());
-        User usuario =new User();
-        usuario = conn.serviceGetUserData("users/2");
-        /*Log .d("USERID", usuario.getId());*/
-        DataExport data = new DataExport();
-        data.setLatitude(latitudeValueGPS.getText().toString());
-        data.setLongitude(longitudeValueGPS.getText().toString());
-       // conn.createUserLocation("location",data);
+        btnEntrar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, HomeAtivity.class);
+                startActivity(intent);
+            }
+        });
 
+        /*
         mBeaconManager = BeaconManager.getInstanceForApplication(this);
-
         // Fijar un protocolo beacon, Eddystone en este caso
         mBeaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(BeaconParser.EDDYSTONE_UID_LAYOUT));
-
         ArrayList<Identifier> identifiers = new ArrayList<>();
-
         mRegion = new Region(ALL_BEACONS_REGION, identifiers);
-
-        idTxt = (EditText) findViewById(R.id.editTextBeacon);
-
-        prepareDetection();
+        idTxt = findViewById(R.id.editTextBeacon);
+        prepareDetection();*/
     }
-
 
     public void ejecutarTarea(final Handler handler) {
 
@@ -153,15 +143,9 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
     public void actualizarpos() {
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-             //                                         int[] grantResults);
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
         }else {
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
@@ -180,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         contadorProceso.setText(String.valueOf(contador));
     }
 
-
+/*
     private void prepareDetection() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // Si los permisos de localización todavía no se han concedido, solicitarlos
@@ -216,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BLUETOOTH);
         }
     }
-
+*/
     public void onClick(View v) {
         Intent i = new Intent(MainActivity.this, QrCodeActivity.class);
         startActivityForResult(i, REQUEST_CODE_QR_SCAN);
@@ -224,7 +208,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_ENABLE_BLUETOOTH) {
+        /*if (requestCode == REQUEST_ENABLE_BLUETOOTH) {
             // Usuario ha activado el bluetooth
             if (resultCode == RESULT_OK) {
                 startDetectingBeacons();
@@ -233,7 +217,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
-
+*/
         try{
             if (resultCode != Activity.RESULT_OK) {
                 Toast.makeText(getApplicationContext(), "No se pudo obtener una respuesta", Toast.LENGTH_SHORT).show();
@@ -246,7 +230,13 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             if (requestCode == REQUEST_CODE_QR_SCAN) {
                 if (data != null) {
                     String lectura = data.getStringExtra("com.blikoon.qrcodescanner.got_qr_scan_relult");
-                    QR.setText(lectura);
+                    String [] contenido = lectura.split(",");
+                    Person person = new Person();
+                    person.setId(contenido[0]);
+                    person.setName(contenido[1]);
+                    person.setLastName(contenido[2]);
+                    ConstantSQLite.RegisterPersonSQL(person, this);
+                    QR.setText(person.getName());
                 }
             }
         }catch (Exception ex){
@@ -255,9 +245,10 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
 
     }
-    /**
-     * Empezar a detectar los beacons, ocultando o mostrando los botones correspondientes
-     */
+
+
+/*
+    // Empezar a detectar los beacons, ocultando o mostrando los botones correspondientes
     private void startDetectingBeacons() {
         // Fijar un periodo de escaneo
         mBeaconManager.setForegroundScanPeriod(DEFAULT_SCAN_PERIOD_MS);
@@ -282,10 +273,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     }
 
 
-    /**
-     * Método llamado cada DEFAULT_SCAN_PERIOD_MS segundos con los beacons detectados durante ese
-     * periodo
-     */
+    // Método llamado cada DEFAULT_SCAN_PERIOD_MS segundos con los beacons detectados durante ese
     @Override
     public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
 
@@ -294,27 +282,19 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         }
 
         for (Beacon beacon : beacons) {
-            idTxt.setText(String.valueOf(beacon.getId1()));
+            Person usuario;
+            usuario = ConstantSQLite.ConsultarDatosPerson(this);
+            data.setId(Long.parseLong(usuario.getId()));
+            data.setLatitude(latitudeValueGPS.getText().toString());
+            data.setLongitude(longitudeValueGPS.getText().toString());
+            data.setBeaconUID(String.valueOf(beacon.getId1()));
+            // conn.createUserLocation("location",data);
+            idTxt.setText("Beacon encontrado");
         }
     }
 
-    private void stopDetectingBeacons() {
-        try {
-            mBeaconManager.stopMonitoringBeaconsInRegion(mRegion);
-            showToastMessage("Deteniendo");
-        } catch (RemoteException e) {
-            Log.d(TAG, "Se ha producido una excepción al parar de buscar beacons " + e.getMessage());
-        }
 
-        mBeaconManager.removeAllRangeNotifiers();
-
-        // Desenlazar servicio de beacons
-        mBeaconManager.unbind(this);
-    }
-
-    /**
-     * Comprobar permisión de localización para Android >= M
-     */
+    // Comprobar permisión de localización para Android >= M
     private void askForLocationPermissions() {
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -344,14 +324,12 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                     builder.setTitle("funcionality_limited");
                     builder.setMessage("location_not_granted, cannot_discover_beacons");
                     builder.setPositiveButton(android.R.string.ok, null);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                            @Override
-                            public void onDismiss(DialogInterface dialog) {
+                    builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
 
-                            }
-                        });
-                    }
+                        }
+                    });
                     builder.show();
                 }
                 return;
@@ -359,11 +337,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         }
     }
 
-    /**
-     * Comprobar si la localización está activada
-     *
-     * @return true si la localización esta activada, false en caso contrario
-     */
+
+    // Comprobar si la localización está activada @return true si la localización esta activada, false en caso contrario
     private boolean isLocationEnabled() {
 
         LocationManager lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
@@ -384,9 +359,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         return networkLocationEnabled || gpsLocationEnabled;
     }
 
-    /**
-     * Abrir ajustes de localización para que el usuario pueda activar los servicios de localización
-     */
+
+    // Abrir ajustes de localización para que el usuario pueda activar los servicios de localización
     private void askToTurnOnLocation() {
 
         // Notificar al usuario
@@ -403,11 +377,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         dialog.show();
     }
 
-    /**
-     * Mostrar mensaje
-     *
-     * @param message mensaje a enseñar
-     */
+    // Mostrar mensaje
     private void showToastMessage (String message) {
         Toast toast = Toast.makeText(this, message, Toast.LENGTH_LONG);
         toast.setGravity(Gravity.CENTER, 0, 0);
@@ -421,4 +391,5 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         mBeaconManager.unbind(this);
     }
 
+ */
 }

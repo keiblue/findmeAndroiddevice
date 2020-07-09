@@ -1,4 +1,4 @@
-package com.example.findmedevice;
+package com.example.findmedevice.models;
 
 public class DataExport {
     long id;

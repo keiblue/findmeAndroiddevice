@@ -1,11 +1,11 @@
-package com.example.findmedevice;
+package com.example.findmedevice.models;
 
-public class User {
+public class Person {
     private String id;
     private String name;
     private String LastName;
 
-    public User(){
+    public Person(){
 
     };
 
@@ -31,9 +31,5 @@ public class User {
 
     public void setLastName(String lastName) {
         LastName = lastName;
-    }
-    @Override
-     public String toString(){
-        return  "pico pal que lee";
     }
 }
