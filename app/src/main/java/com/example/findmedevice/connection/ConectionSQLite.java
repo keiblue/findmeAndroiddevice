@@ -14,14 +14,18 @@ public class ConectionSQLite extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(ConstantSQLite.CREAR_TABLA_PERSONA);
+        db.execSQL(ConstantSQLite.CREAR_TABLA_SMARTPHONE);
+
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS "+ConstantSQLite.TABLA_PERSONA);
+        db.execSQL("DROP TABLE IF EXISTS "+ConstantSQLite.TABLA_SMARTPHONE);
     }
 
     public void deleteAll(SQLiteDatabase db) {
         db.delete(ConstantSQLite.TABLA_PERSONA, null, null);
+        db.delete(ConstantSQLite.TABLA_SMARTPHONE, null, null);
     }
 }

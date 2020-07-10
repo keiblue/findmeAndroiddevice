@@ -46,7 +46,7 @@ public class ConstantSQLite {
             person.setLastName(cursorUser.getString(cursorUser.getColumnIndex(CAMPO_APELLIDO)));
             cursorUser.close();
         }catch (Exception e){
-            Toast.makeText(context, "No resulto", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "No resulto Person", Toast.LENGTH_SHORT).show();
         }
         db.close();
         return person;
@@ -64,8 +64,8 @@ public class ConstantSQLite {
         conSQL = new ConectionSQLite(context, ConstantSQLite.BASE_DATOS, null, 1);
         SQLiteDatabase db = conSQL.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(ConstantSQLite.CAMPO_ID, smartphone.getId());
-        db.insert(ConstantSQLite.TABLA_PERSONA, null, values);
+        values.put(ConstantSQLite.CAMPO_ID, "1");
+        db.insert(ConstantSQLite.TABLA_SMARTPHONE, null, values);
         db.close();
     }
 
@@ -79,7 +79,7 @@ public class ConstantSQLite {
             smartphone.setId(cursorSmartphone.getString(cursorSmartphone.getColumnIndex(CAMPO_ID)));
             cursorSmartphone.close();
         }catch (Exception e){
-            Toast.makeText(context, "No resulto", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "No resulto Smartphone", Toast.LENGTH_SHORT).show();
         }
         db.close();
         return smartphone;

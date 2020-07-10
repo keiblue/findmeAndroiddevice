@@ -43,7 +43,7 @@ public class HomeAtivity extends AppCompatActivity implements BeaconConsumer, Ra
 
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
     private static final String ALL_BEACONS_REGION = "AllBeaconsRegion";
-    private static final long DEFAULT_SCAN_PERIOD_MS = 5000;
+    private static long DEFAULT_SCAN_PERIOD_MS = 5000;
     private static final int REQUEST_ENABLE_BLUETOOTH = 1;
     TextView uuid;
     DataExport data = new DataExport();
@@ -78,6 +78,12 @@ public class HomeAtivity extends AppCompatActivity implements BeaconConsumer, Ra
         mRegion = new Region(ALL_BEACONS_REGION, identifiers);
         idTxt = findViewById(R.id.editTextBeacon);
         prepareDetection();
+        person = ConstantSQLite.ConsultarDatosPerson(getApplicationContext());
+        smartphone = ConstantSQLite.ConsultarSmartphone(getApplicationContext());
+        final String androidId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        Log.i("IDANDROID",androidId);
+        showToastMessage("ID Person "+person.getId());
+        //conn.createSmartphone("userdevice/"+person.getId()+"/createsmartphone", data, getApplicationContext());
     }
 
     private void prepareDetection() {
@@ -194,37 +200,26 @@ public class HomeAtivity extends AppCompatActivity implements BeaconConsumer, Ra
     @Override
     public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
         if (beacons.size() == 0) {
-            showToastMessage("No se detectó beacon");
+            uuid.setText("Beacon no encontrado");
+            //conexion para mandar info que no hay beacon
         }
 
         for (Beacon beacon : beacons) {
+            DEFAULT_SCAN_PERIOD_MS = 60000;
             data.setLatitude(String.valueOf(location.getLatitude()));
             data.setLongitude(String.valueOf(location.getLongitude()));
             data.setBeaconUID(String.valueOf(beacon.getId1()));
             uuid.setText("Beacon encontrado");
-
-            person = ConstantSQLite.ConsultarDatosPerson(getApplicationContext());
+            smartphone.setId(data.getBeaconUID());
             try{
                 if(data.getBeaconUID() != null){
-                    conn.createSmartphone("userdevice/"+person.getId()+"/createsmartphone", data, getApplicationContext());
-                }else{
-                    conn.createSmartphone("userdevice/"+person.getId()+"/UpdateBeacon", data, getApplicationContext());//update
+                    //conn.updateSmartphone("userdevice/"+person.getId()+"/UpdateBeacon", data, getApplicationContext());//update
+                    //conn.createUserLocation("userdevice/"+person.getId()+"/location",data);
                 }
             }catch (Exception e){
                 System.out.println(e.getStackTrace());
-            }finally {
-                smartphone = ConstantSQLite.ConsultarSmartphone(getApplicationContext());
-                if(smartphone.getId() != null){
-                    showToastMessage("Hay ID");
-                    //hago la wea del location
-                    conn.createUserLocation("userdevice/"+person.getId()+"/location",data);
-                }
             }
-
-
         }
-
-
     }
 
     // Mostrar mensaje

@@ -1,17 +1,17 @@
 package com.example.findmedevice.models;
 
 public class DataExport {
-    long id;
+    String androidId;
     String beaconUID;
     String longitude;
     String latitude;
 
-    public long getId() {
-        return id;
+    public String getAndroidId() {
+        return androidId;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setAndroidId(String androidId) {
+        this.androidId = androidId;
     }
 
     public String getBeaconUID() {

@@ -122,7 +122,7 @@ public class Connections {
                     conn.connect();
 
                     JSONObject jsonParam = new JSONObject();
-                    jsonParam.put("androidId", "Telefono1");
+                    jsonParam.put("androidId", data.getAndroidId());
                     jsonParam.put("BeaconId", data.getBeaconUID());
 
 
