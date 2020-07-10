@@ -202,15 +202,26 @@ public class HomeAtivity extends AppCompatActivity implements BeaconConsumer, Ra
             data.setLongitude(String.valueOf(location.getLongitude()));
             data.setBeaconUID(String.valueOf(beacon.getId1()));
             uuid.setText("Beacon encontrado");
-            if(data.getBeaconUID() != null){
-                person = ConstantSQLite.ConsultarDatosPerson(getApplicationContext());
-                conn.createSmartphone("userdevice/"+person.getId()+"/createsmartphone", data, getApplicationContext());
+
+            person = ConstantSQLite.ConsultarDatosPerson(getApplicationContext());
+            try{
+                if(data.getBeaconUID() != null){
+                    conn.createSmartphone("userdevice/"+person.getId()+"/createsmartphone", data, getApplicationContext());
+                }else{
+                    conn.createSmartphone("userdevice/"+person.getId()+"/UpdateBeacon", data, getApplicationContext());//update
+                }
+            }catch (Exception e){
+                System.out.println(e.getStackTrace());
+            }finally {
                 smartphone = ConstantSQLite.ConsultarSmartphone(getApplicationContext());
+                if(smartphone.getId() != null){
+                    showToastMessage("Hay ID");
+                    //hago la wea del location
+                    conn.createUserLocation("userdevice/"+person.getId()+"/location",data);
+                }
             }
-            if(smartphone.getId() != null){
-                showToastMessage("Hay ID");
-            }
-            //conn.createUserLocation("userdevice/"+smartphone.getId()+"/location",data);
+
+
         }
 
 
