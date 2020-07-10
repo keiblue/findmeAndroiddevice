@@ -83,7 +83,7 @@ public class HomeAtivity extends AppCompatActivity implements BeaconConsumer, Ra
         final String androidId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         Log.i("IDANDROID",androidId);
         showToastMessage("ID Person "+person.getId());
-        //conn.createSmartphone("userdevice/"+person.getId()+"/createsmartphone", data, getApplicationContext());
+        conn.createSmartphone("userdevice/"+person.getId()+"/createsmartphone", data, getApplicationContext());
     }
 
     private void prepareDetection() {
@@ -214,7 +214,7 @@ public class HomeAtivity extends AppCompatActivity implements BeaconConsumer, Ra
             try{
                 if(data.getBeaconUID() != null){
                     //conn.updateSmartphone("userdevice/"+person.getId()+"/UpdateBeacon", data, getApplicationContext());//update
-                    //conn.createUserLocation("userdevice/"+person.getId()+"/location",data);
+                    conn.createUserLocation("userdevice/"+person.getId()+"/location",data);
                 }
             }catch (Exception e){
                 System.out.println(e.getStackTrace());
