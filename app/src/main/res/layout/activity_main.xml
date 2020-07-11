@@ -12,13 +12,10 @@
         android:id="@+id/textViewQr"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="200dp"
+        android:layout_marginTop="150dp"
         android:layout_marginStart="60dp"
         android:layout_marginEnd="60dp"
-        android:text="Lectura QR"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:text="Lectura QR"/>
 
     <Button
         android:id="@+id/buttonQR"
@@ -28,10 +25,7 @@
         android:onClick="onClick"
         android:layout_marginStart="60dp"
         android:layout_marginEnd="60dp"
-        android:text="Leer QR"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewQr" />
+        android:text="Leer QR" />
 
     <RadioButton
         android:id="@+id/radioButtonSesion"
@@ -39,25 +33,14 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="60dp"
         android:layout_marginEnd="60dp"
-        android:hint="Validar ingreso"
-        app:layout_constraintBottom_toTopOf="@+id/buttonEntrar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonQR"
-        app:layout_constraintVertical_bias="0.573" />
+        android:hint="Validar ingreso" />
 
     <Button
         android:id="@+id/buttonEntrar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="284dp"
         android:layout_marginStart="60dp"
         android:layout_marginEnd="60dp"
-        android:text="Entrar"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:text="Entrar" />
 
 </LinearLayout>
