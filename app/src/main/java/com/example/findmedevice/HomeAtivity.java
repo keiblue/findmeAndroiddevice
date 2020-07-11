@@ -43,7 +43,7 @@ public class HomeAtivity extends AppCompatActivity implements BeaconConsumer, Ra
 
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
     private static final String ALL_BEACONS_REGION = "AllBeaconsRegion";
-    private static long DEFAULT_SCAN_PERIOD_MS = 5000;
+    private static final long DEFAULT_SCAN_PERIOD_MS = 5000;
     private static final int REQUEST_ENABLE_BLUETOOTH = 1;
     TextView uuid;
     DataExport data = new DataExport();
@@ -76,13 +76,10 @@ public class HomeAtivity extends AppCompatActivity implements BeaconConsumer, Ra
         mBeaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(BeaconParser.EDDYSTONE_UID_LAYOUT));
         ArrayList<Identifier> identifiers = new ArrayList<>();
         mRegion = new Region(ALL_BEACONS_REGION, identifiers);
-        idTxt = findViewById(R.id.editTextBeacon);
         prepareDetection();
         person = ConstantSQLite.ConsultarDatosPerson(getApplicationContext());
-        smartphone = ConstantSQLite.ConsultarSmartphone(getApplicationContext());
         final String androidId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         Log.i("IDANDROID",androidId);
-        showToastMessage("ID Person "+person.getId());
         conn.createSmartphone("userdevice/"+person.getId()+"/createsmartphone", data, getApplicationContext());
     }
 
@@ -205,7 +202,7 @@ public class HomeAtivity extends AppCompatActivity implements BeaconConsumer, Ra
         }
 
         for (Beacon beacon : beacons) {
-            DEFAULT_SCAN_PERIOD_MS = 60000;
+            smartphone = ConstantSQLite.ConsultarSmartphone(getApplicationContext());
             data.setLatitude(String.valueOf(location.getLatitude()));
             data.setLongitude(String.valueOf(location.getLongitude()));
             data.setBeaconUID(String.valueOf(beacon.getId1()));

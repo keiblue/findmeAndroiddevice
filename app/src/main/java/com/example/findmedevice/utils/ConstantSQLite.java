@@ -64,7 +64,7 @@ public class ConstantSQLite {
         conSQL = new ConectionSQLite(context, ConstantSQLite.BASE_DATOS, null, 1);
         SQLiteDatabase db = conSQL.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(ConstantSQLite.CAMPO_ID, "1");
+        values.put(ConstantSQLite.CAMPO_ID, smartphone.getId());
         db.insert(ConstantSQLite.TABLA_SMARTPHONE, null, values);
         db.close();
     }

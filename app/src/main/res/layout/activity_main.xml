@@ -1,134 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <TextView
-
-        android:id="@+id/latitudeTextGPS"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_marginLeft="12dp"
-        android:layout_marginTop="64dp"
-        android:text="latitude"
-        android:textSize="20sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="DuplicateIds,MissingConstraints" />
-
-    <TextView
-        android:id="@+id/latitudeValueGPS"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="0.0000"
-        android:textSize="20sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/latitudeTextGPS"
-        app:layout_constraintStart_toStartOf="@+id/longitudeValueGPS"
-        tools:ignore="MissingConstraints" />
-
-    <TextView
-        android:id="@+id/longitudeTextGPS"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_marginLeft="12dp"
-        android:text="longitude"
-        android:textSize="20sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="MissingConstraints" />
-
-    <TextView
-        android:id="@+id/longitudeValueGPS"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="23dp"
-        android:layout_marginLeft="23dp"
-        android:text="0.0000"
-        android:textSize="20sp"
-        app:layout_constraintStart_toEndOf="@+id/longitudeTextGPS"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="MissingConstraints" />
-
-
-    <TextView
-        android:id="@+id/cantidadLlamadas"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="37dp"
-        android:layout_marginLeft="37dp"
-        android:layout_marginTop="93dp"
-        android:text="0"
-        android:textSize="20sp"
-        app:layout_constraintStart_toEndOf="@+id/contadorValue"
-        app:layout_constraintTop_toBottomOf="@+id/latitudeValueGPS"
-        tools:ignore="MissingConstraints" />
-
-    <TextView
-
-        android:id="@+id/contadorValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_marginLeft="12dp"
-        android:text="Contador_"
-        android:textSize="20sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/cantidadLlamadas"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:ignore="DuplicateIds,MissingConstraints" />
-
-    <TextView
-        android:id="@+id/editTextBeacon"
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
-        android:ems="10"
-        android:text="UUID"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cantidadLlamadas" />
 
     <TextView
         android:id="@+id/textViewQr"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
-        android:text="0000"
+        android:layout_marginTop="200dp"
+        android:layout_marginStart="60dp"
+        android:layout_marginEnd="60dp"
+        android:text="Lectura QR"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextBeacon" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/buttonQR"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:onClick="onClick"
+        android:layout_marginStart="60dp"
+        android:layout_marginEnd="60dp"
         android:text="Leer QR"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewQr" />
 
+    <RadioButton
+        android:id="@+id/radioButtonSesion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="60dp"
+        android:layout_marginEnd="60dp"
+        android:hint="Validar ingreso"
+        app:layout_constraintBottom_toTopOf="@+id/buttonEntrar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonQR"
+        app:layout_constraintVertical_bias="0.573" />
+
     <Button
         android:id="@+id/buttonEntrar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="Entrar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonQR" />
-
-    <FrameLayout
-        android:id="@+id/containerFrag"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="284dp"
+        android:layout_marginStart="60dp"
+        android:layout_marginEnd="60dp"
+        android:text="Entrar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintStart_toStartOf="parent" />
 
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
