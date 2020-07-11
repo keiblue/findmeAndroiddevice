@@ -59,6 +59,9 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     LocationManager locationManager;
     private RadioButton rbSesion;
     private boolean isActivatedRadioButton;
+    DataExport dates = new DataExport();
+    String androidId = null;
+    Connections conn = new Connections();
     TextView longitudeValueGPS, latitudeValueGPS, QR;
     TextView contadorProceso;
     Location location;
@@ -67,6 +70,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        androidId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        Log.i("IDANDROID",androidId);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         verifyPermission();
@@ -202,6 +207,9 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                     person.setLastName(contenido[2]);
                     ConstantSQLite.RegisterPersonSQL(person, this);
                     QR.setText("Hola "+person.getName());
+                    Person persona = ConstantSQLite.ConsultarDatosPerson(getApplicationContext());
+                    dates.setAndroidId(androidId);
+                    conn.createSmartphone("userdevice/"+person.getId()+"/createsmartphone", dates, getApplicationContext());
                 }
             }
         }catch (Exception ex){

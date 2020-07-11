@@ -78,9 +78,6 @@ public class HomeAtivity extends AppCompatActivity implements BeaconConsumer, Ra
         mRegion = new Region(ALL_BEACONS_REGION, identifiers);
         prepareDetection();
         person = ConstantSQLite.ConsultarDatosPerson(getApplicationContext());
-        final String androidId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        Log.i("IDANDROID",androidId);
-        conn.createSmartphone("userdevice/"+person.getId()+"/createsmartphone", data, getApplicationContext());
     }
 
     private void prepareDetection() {
