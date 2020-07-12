@@ -19,7 +19,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class Connections {
+public class ConnectionsBackend {
 
     private String urlBase = "https://find-me-back-end.herokuapp.com/api/";
 

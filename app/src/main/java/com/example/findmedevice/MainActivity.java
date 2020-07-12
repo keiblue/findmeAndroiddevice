@@ -2,53 +2,30 @@ package com.example.findmedevice;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.RemoteException;
 import android.provider.Settings;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.blikoon.qrcodescanner.QrCodeActivity;
-import com.example.findmedevice.connection.Connections;
+import com.example.findmedevice.connection.ConnectionsBackend;
 import com.example.findmedevice.models.DataExport;
 import com.example.findmedevice.models.Person;
 import com.example.findmedevice.utils.ConstantSQLite;
-
-import org.altbeacon.beacon.Beacon;
-import org.altbeacon.beacon.BeaconConsumer;
-import org.altbeacon.beacon.BeaconManager;
-import org.altbeacon.beacon.BeaconParser;
-import org.altbeacon.beacon.Identifier;
-import org.altbeacon.beacon.RangeNotifier;
-import org.altbeacon.beacon.Region;
-
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 
 public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
@@ -61,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     private boolean isActivatedRadioButton;
     DataExport dates = new DataExport();
     String androidId = null;
-    Connections conn = new Connections();
+    ConnectionsBackend conn = new ConnectionsBackend();
     TextView longitudeValueGPS, latitudeValueGPS, QR;
     TextView contadorProceso;
     Location location;
@@ -74,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         Log.i("IDANDROID",androidId);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ConstantSQLite.BorrarDB(this);
         verifyPermission();
         if(obtenerEstadoButton(this)){
             try {

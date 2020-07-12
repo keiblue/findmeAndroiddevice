@@ -22,10 +22,9 @@ import android.view.Gravity;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.findmedevice.connection.Connections;
+import com.example.findmedevice.connection.ConnectionsBackend;
 import com.example.findmedevice.models.DataExport;
 import com.example.findmedevice.models.Person;
-import com.example.findmedevice.models.Smartphone;
 import com.example.findmedevice.utils.ConstantSQLite;
 
 import org.altbeacon.beacon.Beacon;
@@ -43,7 +42,7 @@ public class HomeAtivity extends AppCompatActivity implements BeaconConsumer, Ra
 
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
     private static final String ALL_BEACONS_REGION = "AllBeaconsRegion";
-    private static final long DEFAULT_SCAN_PERIOD_MS = 10000;
+    private static final long DEFAULT_SCAN_PERIOD_MS = 30000;
     private static final int REQUEST_ENABLE_BLUETOOTH = 1;
     TextView uuid;
     DataExport data = new DataExport();
@@ -52,7 +51,7 @@ public class HomeAtivity extends AppCompatActivity implements BeaconConsumer, Ra
     Location location;
     private Region mRegion;
     protected final String TAG = HomeAtivity.this.getClass().getSimpleName();
-    Connections conn = new Connections();
+    ConnectionsBackend conn = new ConnectionsBackend();
     Person person;
 
     @Override
