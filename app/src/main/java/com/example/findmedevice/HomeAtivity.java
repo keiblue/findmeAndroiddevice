@@ -204,7 +204,7 @@ public class HomeAtivity extends AppCompatActivity implements BeaconConsumer, Ra
             data.setLongitude(String.valueOf(location.getLongitude()));
             conn.createUserLocation("userdevice/"+person.getId()+"/location",data);
             if(data.getBeaconUID() != null){
-                //conn.updateSmartphone("userdevice/"+person.getId()+"/Updat eBeacon", data, getApplicationContext());//update
+                conn.updateSmartphone("userdevice/"+person.getId()+"/UpdateBeacon", data, getApplicationContext());//update
             }
         }catch (Exception e){
             System.out.println(e.getStackTrace());

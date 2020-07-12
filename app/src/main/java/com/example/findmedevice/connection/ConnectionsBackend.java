@@ -167,4 +167,71 @@ public class ConnectionsBackend {
         });
         thread.start();
     }
+
+    public void updateSmartphone(final String url, final DataExport data, final Context context) {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+
+                    String mensaje ="";
+                    String route = urlBase.concat(url);
+                    StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+                    StrictMode.setThreadPolicy(policy);
+                    HttpURLConnection conn;
+                    URL urlt = new URL(route);
+                    conn = (HttpURLConnection) urlt.openConnection();
+                    conn.setRequestMethod("PUT");
+                    conn.setRequestProperty("Content-Type", "application/json");
+                    conn.setRequestProperty("Accept", "application/json");
+                    conn.setDoOutput(true);
+                    conn.setDoInput(true);
+                    conn.connect();
+
+                    JSONObject jsonParam = new JSONObject();
+                    jsonParam.put("androidId", data.getAndroidId());
+                    jsonParam.put("BeaconId", data.getBeaconUID());
+
+
+                    Log.i("JSON", jsonParam.toString());
+                    DataOutputStream os = new DataOutputStream(conn.getOutputStream());
+                    //os.writeBytes(URLEncoder.encode(jsonParam.toString(), "UTF-8"));
+                    os.writeBytes(jsonParam.toString());
+
+                    os.flush();
+                    os.close();
+
+                    BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                    StringBuilder response = new StringBuilder();
+                    String responseLine = null;
+                    while ((responseLine = br.readLine()) != null) {
+                        response.append(responseLine.trim());
+                    }
+                    Smartphone smartphone = new Smartphone();
+                    String json = response.toString();
+                    JSONObject object = new JSONObject(json);
+
+                    /*for (int i = 0; i < object.length(); i++) {
+                        try {
+                            JSONObject jsonObject = object.getJSONObject("data");
+                            smartphone.setId(jsonObject.optString("id"));
+                            ConstantSQLite.RegisterSmartphoneSQL(smartphone, context);
+                            mensaje= object.optString("menssage");
+                        }catch (Exception e){
+                            mensaje= object.optString("menssage");
+
+                        }
+                    }*/
+
+                    Log.i("STATUS", String.valueOf(conn.getResponseCode()));
+                    Log.i("MSG", conn.getResponseMessage());
+
+                    conn.disconnect();
+                } catch (JSONException | IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        thread.start();
+    }
 }
