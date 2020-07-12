@@ -51,10 +51,8 @@ public class HomeAtivity extends AppCompatActivity implements BeaconConsumer, Ra
     LocationManager locationManager;
     Location location;
     private Region mRegion;
-    private TextView idTxt;
     protected final String TAG = HomeAtivity.this.getClass().getSimpleName();
     Connections conn = new Connections();
-    Smartphone smartphone;
     Person person;
 
     @Override
