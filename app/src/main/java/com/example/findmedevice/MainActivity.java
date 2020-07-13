@@ -183,10 +183,11 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                     person.setId(contenido[0]);
                     person.setName(contenido[1]);
                     person.setLastName(contenido[2]);
-                    ConstantSQLite.RegisterPersonSQL(person, this);
-                    QR.setText("Hola "+person.getName());
-                    Person persona = ConstantSQLite.ConsultarDatosPerson(getApplicationContext());
                     dates.setAndroidId(androidId);
+                    if(ConstantSQLite.ConsultarDatosPerson(this).getId() == null){
+                        ConstantSQLite.RegisterPersonSQL(person, this);
+                    }
+                    QR.setText("Hola "+person.getName());
                     conn.createSmartphone("userdevice/"+person.getId()+"/createsmartphone", dates, getApplicationContext());
                 }
             }

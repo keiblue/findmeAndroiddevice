@@ -148,7 +148,9 @@ public class ConnectionsBackend {
                         try {
                             JSONObject jsonObject = object.getJSONObject("data");
                             smartphone.setId(jsonObject.optString("id"));
-                            ConstantSQLite.RegisterSmartphoneSQL(smartphone, context);
+                            if(ConstantSQLite.ConsultarSmartphone(context).getId() == null){
+                                ConstantSQLite.RegisterSmartphoneSQL(smartphone, context);
+                            }
                             mensaje= object.optString("menssage");
                         }catch (Exception e){
                             mensaje= object.optString("menssage");

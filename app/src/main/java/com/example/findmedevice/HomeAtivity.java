@@ -10,6 +10,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
@@ -42,8 +43,12 @@ public class HomeAtivity extends AppCompatActivity implements BeaconConsumer, Ra
 
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
     private static final String ALL_BEACONS_REGION = "AllBeaconsRegion";
-    private static final long DEFAULT_SCAN_PERIOD_MS = 30000;
+    private static final long DEFAULT_SCAN_PERIOD_MS = 20000;
     private static final int REQUEST_ENABLE_BLUETOOTH = 1;
+    private static final String STRING_PREFERENSES = "findeMeDevice";
+    private static final String PREFERENCE_ESTADO_SESION = "estado.sesion";
+    private boolean estadoBeacon = false;
+    private String uid = null;
     TextView uuid;
     DataExport data = new DataExport();
     private BeaconManager mBeaconManager;
@@ -75,6 +80,7 @@ public class HomeAtivity extends AppCompatActivity implements BeaconConsumer, Ra
         mRegion = new Region(ALL_BEACONS_REGION, identifiers);
         prepareDetection();
         person = ConstantSQLite.ConsultarDatosPerson(getApplicationContext());
+        guardarEstadoButton();
     }
 
     private void prepareDetection() {
@@ -196,19 +202,25 @@ public class HomeAtivity extends AppCompatActivity implements BeaconConsumer, Ra
         }
 
         for (Beacon beacon : beacons) {
-            data.setBeaconUID(String.valueOf(beacon.getId1()));
+            uid = (String.valueOf(beacon.getId1()));
             uuid.setText("Beacon encontrado");
         }
         try{
             data.setLatitude(String.valueOf(location.getLatitude()));
             data.setLongitude(String.valueOf(location.getLongitude()));
+            data.setBeaconUID(uid);
             conn.createUserLocation("userdevice/"+person.getId()+"/location",data);
             if(data.getBeaconUID() != null){
+                conn.updateSmartphone("userdevice/"+person.getId()+"/UpdateBeacon", data, getApplicationContext());//update
+                cambiarEstadoButton(this, true);
+            }else if(obtenerEstadoButton(this) && data.getBeaconUID() == null){
+                data.setBeaconUID("null");
                 conn.updateSmartphone("userdevice/"+person.getId()+"/UpdateBeacon", data, getApplicationContext());//update
             }
         }catch (Exception e){
             System.out.println(e.getStackTrace());
         }
+        uid = null;
     }
 
     // Mostrar mensaje
@@ -216,5 +228,20 @@ public class HomeAtivity extends AppCompatActivity implements BeaconConsumer, Ra
         Toast toast = Toast.makeText(this, message, Toast.LENGTH_LONG);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
+    }
+
+    public static void cambiarEstadoButton(Context c, boolean b){
+        SharedPreferences preferences = c.getSharedPreferences(STRING_PREFERENSES, MODE_PRIVATE);
+        preferences.edit().putBoolean(PREFERENCE_ESTADO_SESION, b).apply();
+    }
+
+    public void guardarEstadoButton(){
+        SharedPreferences preferences = getSharedPreferences(STRING_PREFERENSES, MODE_PRIVATE);
+        preferences.edit().putBoolean(PREFERENCE_ESTADO_SESION, estadoBeacon).apply();
+    }
+
+    public static boolean obtenerEstadoButton(Context c){
+        SharedPreferences preferences = c.getSharedPreferences(STRING_PREFERENSES, MODE_PRIVATE);
+        return preferences.getBoolean(PREFERENCE_ESTADO_SESION, false);
     }
 }
