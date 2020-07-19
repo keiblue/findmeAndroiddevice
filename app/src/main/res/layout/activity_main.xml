@@ -7,40 +7,47 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:src="@mipmap/ic_launcher_foreground"/>
 
     <TextView
         android:id="@+id/textViewQr"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="150dp"
-        android:layout_marginStart="60dp"
-        android:layout_marginEnd="60dp"
+        android:layout_width="300dp"
+        android:layout_gravity="center"
+        android:layout_height="40dp"
+        android:layout_marginTop="80dp"
+        android:textAlignment="center"
+        android:textSize="30dp"
         android:text="Lectura QR"/>
 
     <Button
         android:id="@+id/buttonQR"
-        android:layout_width="match_parent"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:layout_marginTop="32dp"
         android:onClick="onClick"
-        android:layout_marginStart="60dp"
-        android:layout_marginEnd="60dp"
+        android:background="@drawable/baton_redondo"
         android:text="Leer QR" />
 
     <RadioButton
         android:id="@+id/radioButtonSesion"
-        android:layout_width="match_parent"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="60dp"
-        android:layout_marginEnd="60dp"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center"
         android:hint="Validar ingreso" />
 
     <Button
         android:id="@+id/buttonEntrar"
-        android:layout_width="match_parent"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="60dp"
-        android:layout_marginEnd="60dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/baton_redondo"
         android:text="Entrar" />
 
 </LinearLayout>

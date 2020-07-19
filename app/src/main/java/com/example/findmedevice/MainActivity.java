@@ -32,18 +32,13 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     private static final String STRING_PREFERENSES = "findme.device";
     private static final String PREFERENCE_ESTADO_SESION = "estado.sesion";
     private static final int REQUEST_CODE_QR_SCAN = 101;
-    private final int TIEMPO = 5000;
-    LocationManager locationManager;
     private RadioButton rbSesion;
     private boolean isActivatedRadioButton;
     DataExport dates = new DataExport();
     String androidId = null;
     ConnectionsBackend conn = new ConnectionsBackend();
-    TextView longitudeValueGPS, latitudeValueGPS, QR;
-    TextView contadorProceso;
-    Location location;
-    int contador;
     private Button btnEntrar;
+    TextView QR;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,11 +46,11 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         Log.i("IDANDROID",androidId);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ConstantSQLite.BorrarDB(this);
         verifyPermission();
         if(obtenerEstadoButton(this)){
+            Person person = ConstantSQLite.ConsultarDatosPerson(getApplicationContext());
             try {
-                if(ConstantSQLite.ConsultarDatosPerson(getApplicationContext()).getId() != null) {
+                if(person.getId() != null) {
                     Intent intent = new Intent(MainActivity.this, HomeAtivity.class);
                     startActivity(intent);
                     finish();
@@ -65,7 +60,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                     Intent intent = new Intent(MainActivity.this, MainActivity.class);
                     startActivity(intent);
                 }
-                finish();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -73,11 +67,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         btnEntrar = findViewById(R.id.buttonEntrar);
         QR = findViewById(R.id.textViewQr);
         rbSesion = findViewById(R.id.radioButtonSesion);
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        contador =1;
-        Handler handler = new Handler();
-        //actualizarpos();
-        ejecutarTarea(handler);
         isActivatedRadioButton = rbSesion.isChecked();
         rbSesion.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,8 +77,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                 isActivatedRadioButton = rbSesion.isChecked();
             }
         });
-
-
         btnEntrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -103,42 +90,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                 }
             }
         });
-
     }
 
-    public void ejecutarTarea(final Handler handler) {
-
-        handler.postDelayed(new Runnable() {
-
-            public void run() {
-
-                //actualizarpos(); // función para refrescar la ubicación del conductor, creada en otra línea de código
-                actualizaContador();
-                handler.postDelayed(this, TIEMPO);
-            }
-
-        }, TIEMPO);
-
-    }
-/*
-    public void actualizarpos() {
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
-                PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-        }else {
-            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            if(location == null){
-                location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            }
-            latitudeValueGPS.setText(String.valueOf(location.getLatitude()));
-            longitudeValueGPS.setText(String.valueOf(location.getLongitude()));
-        }
-        //TODO: actualizar registro en DB , tabla ubicacion con IdTelefono
-
-    }
-*/
     private void verifyPermission() {
         int permsRequestCode = 100;
         String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.CAMERA};
@@ -151,11 +104,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         } else {
             requestPermissions(perms, permsRequestCode);
         }
-    }
-
-    public void actualizaContador(){
-        //contador+=1;
-        //contadorProceso.setText(String.valueOf(contador));
     }
 
     public void onClick(View v) {
